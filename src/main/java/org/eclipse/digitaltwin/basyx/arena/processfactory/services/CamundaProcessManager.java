@@ -33,12 +33,10 @@ public class CamundaProcessManager {
     private final ZeebeClient zeebeClient;
     private Deque<String> processes = new ArrayDeque<>();
 
-
     public CamundaProcessManager(CamundaSettings settings, ZeebeClient zeebeClient) {
         this.settings = settings;
         this.zeebeClient = zeebeClient;
     }
-
 
     /**
      * Deploys the most recent process to a Zeebe Server

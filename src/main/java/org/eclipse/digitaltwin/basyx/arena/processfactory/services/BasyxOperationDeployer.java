@@ -11,7 +11,6 @@ import org.eclipse.digitaltwin.basyx.arena.processfactory.controllers.OperationC
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Deploys all process related operations
@@ -21,33 +20,31 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Service
 public class BasyxOperationDeployer {
     private final ConnectedSubmodelService smService;
-    private final Operation[] operations = buildOperations();
-    private static final String BASE_URL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
     public BasyxOperationDeployer(@Qualifier("operationsSubmodelService") ConnectedSubmodelService smService) {
         this.smService = smService;
     }
 
-    public void deployOperations() {
-        List.of(operations).forEach(this::deployOperation);
+    public void deployOperations(String baseUrl) {
+        buildOperations(baseUrl).forEach(this::deployOperation);
     }
 
     private void deployOperation(Operation operation) {
         smService.createSubmodelElement(operation);
     }
 
-    protected static Operation[] buildOperations() {
-        return new Operation[] { buildDeployProcessOperation() };
+    protected static List<Operation> buildOperations(String baseUrl) {
+        return List.of(buildDeployProcessOperation(baseUrl));
     }
 
-    private static Operation buildDeployProcessOperation() {
+    private static Operation buildDeployProcessOperation(String baseUrl) {
         return new DefaultOperation.Builder()
                 .idShort("deployProcess")
                 .qualifiers(new DefaultQualifier.Builder()
                         .kind(QualifierKind.CONCEPT_QUALIFIER)
                         .type("invocationDelegation")
                         .valueType(DataTypeDefXsd.STRING)
-                        .value(BASE_URL + OperationController.DEPLOY_PROCESS_MAPPING)
+                        .value(baseUrl + OperationController.DEPLOY_PROCESS_MAPPING)
                         .build())
                 .build();
     }
