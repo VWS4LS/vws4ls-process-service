@@ -21,8 +21,9 @@ public class OperationController {
 
     @PostMapping(DEPLOY_PROCESS_MAPPING)
     public ResponseEntity<OperationVariable[]> deployProcessOperation(@RequestBody OperationVariable[] requestData) {
-        camundaProcessManager.deployMostRecentProcess();
-        return new ResponseEntity<>(requestData, HttpStatus.OK);
+        return camundaProcessManager.deployMostRecentProcess()
+                .map(filePath -> new ResponseEntity<>(requestData, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(requestData, HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
 }

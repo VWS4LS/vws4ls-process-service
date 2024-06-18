@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
@@ -24,24 +27,43 @@ public class CamundaProcessManager {
 
     public static final String DEFAULT_FILENAME = "process.bpmn";
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final CamundaSettings settings;
     private final ZeebeClient zeebeClient;
     private Deque<String> processes = new ArrayDeque<>();
+
 
     public CamundaProcessManager(CamundaSettings settings, ZeebeClient zeebeClient) {
         this.settings = settings;
         this.zeebeClient = zeebeClient;
     }
 
+
     /**
-     * Deploys most recent process if any.
+     * Deploys the most recent process to a Zeebe Server
+     * 
+     * @param filePath
+     * @return Optional with the filePath of the deployed process
      */
-    public void deployMostRecentProcess() {
-        deployProcess(processes.peek());
+    public Optional<String> deployMostRecentProcess() {
+        return deployProcess(processes.peek());
     }
 
-    public void deployProcess(String filePath) {
-        zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
+    /**
+     * Deploys a process to a Zeebe Server
+     * 
+     * @param filePath
+     * @return Optional with the filePath of the deployed process
+     */
+    public Optional<String> deployProcess(String filePath) {
+        try {
+            zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
+            return Optional.of(filePath);
+        } catch (Exception e) {
+            logger.error("Failed to deploy BPMN file at " + filePath, e);
+            return Optional.empty();
+        }
     }
 
     /**
