@@ -75,7 +75,7 @@ public class CamundaProcessManager {
      * @throws IOException
      */
     public String addProcess(InputStream is, String fileName) throws IOException {
-        String folderPath = settings.processPath();
+        String folderPath = settings.managedProcessesPath();
         fileName = (fileName == null || fileName.isBlank()) ? DEFAULT_FILENAME : fileName;
         File outputFile = new File(folderPath, fileName);
 
