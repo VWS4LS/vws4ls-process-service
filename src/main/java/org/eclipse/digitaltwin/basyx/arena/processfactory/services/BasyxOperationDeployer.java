@@ -9,17 +9,22 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.controllers.OperationController;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Deploys all process related operations
+ * 
+ * @author mateusmolina
  */
+@Service
 public class BasyxOperationDeployer {
     private final ConnectedSubmodelService smService;
     private final Operation[] operations = buildOperations();
     private static final String BASE_URL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
-    public BasyxOperationDeployer(ConnectedSubmodelService smService) {
+    public BasyxOperationDeployer(@Qualifier("operationsSubmodelService") ConnectedSubmodelService smService) {
         this.smService = smService;
     }
 
@@ -32,8 +37,7 @@ public class BasyxOperationDeployer {
     }
 
     protected static Operation[] buildOperations() {
-        Operation[] operations = { buildDeployProcessOperation() };
-        return operations;
+        return new Operation[] { buildDeployProcessOperation() };
     }
 
     private static Operation buildDeployProcessOperation() {

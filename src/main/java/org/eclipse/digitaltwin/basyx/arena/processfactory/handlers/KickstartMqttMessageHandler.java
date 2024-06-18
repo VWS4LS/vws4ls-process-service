@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * When a mqtt message is received, a BaSyx operation is deployed
+ * 
+ * @author mateusmolina
  */
 @Component
 public class KickstartMqttMessageHandler implements MessageHandler {

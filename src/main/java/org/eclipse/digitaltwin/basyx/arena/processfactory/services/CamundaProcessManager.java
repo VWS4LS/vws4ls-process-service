@@ -1,31 +1,73 @@
 package org.eclipse.digitaltwin.basyx.arena.processfactory.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-import org.springframework.stereotype.Service;
+import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
+import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
 
-@Service
+/**
+ * Manages BPMN processes in a configured system directory
+ * 
+ * Processes can be added and deployed to Zeebe
+ * 
+ * @author mateusmolina
+ */
+@Component
 public class CamundaProcessManager {
 
-    public static final String BPMN_RES_PATH = "/process.bpmn";
+    public static final String DEFAULT_FILENAME = "process.bpmn";
 
+    private final CamundaSettings settings;
     private final ZeebeClient zeebeClient;
+    private Deque<String> processes = new ArrayDeque<>();
 
-    public CamundaProcessManager(ZeebeClient zeebeClient) {
+    public CamundaProcessManager(CamundaSettings settings, ZeebeClient zeebeClient) {
+        this.settings = settings;
         this.zeebeClient = zeebeClient;
     }
 
-    public void deployProcessIfAny() {
-        deployProcess(BPMN_RES_PATH);
+    /**
+     * Deploys most recent process if any.
+     */
+    public void deployMostRecentProcess() {
+        deployProcess(processes.peek());
     }
 
-    public void deployProcess(String path) {
-        zeebeClient.newDeployResourceCommand().addResourceFile(path).send();
+    public void deployProcess(String filePath) {
+        zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
     }
 
-    public void addProcess(InputStream is, String fileName) {
+    /**
+     * Adds a BPMN process to be managed
+     * 
+     * @param is
+     * @param fileName, if null or blank, DEFAULT_FILENAME is used
+     * @return filePath
+     * @throws IOException
+     */
+    public String addProcess(InputStream is, String fileName) throws IOException {
+        String folderPath = settings.processPath();
+        fileName = (fileName == null || fileName.isBlank()) ? DEFAULT_FILENAME : fileName;
+        File outputFile = new File(folderPath, fileName);
 
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+
+            processes.add(outputFile.getAbsolutePath());
+
+            return outputFile.getAbsolutePath();
+        }
     }
 }
