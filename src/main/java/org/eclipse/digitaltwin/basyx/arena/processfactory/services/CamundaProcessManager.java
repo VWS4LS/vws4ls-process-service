@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.ZeebeFuture;
 import io.camunda.zeebe.client.api.response.DeploymentEvent;
+import io.camunda.zeebe.client.api.response.Process;
+import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 
 /**
  * Manages BPMN processes in a configured system directory
@@ -28,8 +28,6 @@ public class CamundaProcessManager {
 
     public static final String DEFAULT_FILENAME = "process.bpmn";
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final CamundaSettings settings;
     private final ZeebeClient zeebeClient;
     private Deque<String> processes = new ArrayDeque<>();
@@ -40,28 +38,35 @@ public class CamundaProcessManager {
     }
 
     /**
+     * Instantiates the first deployed process in a DeploymentEvent
+     * 
+     * @param event
+     * @return
+     */
+    public ZeebeFuture<ProcessInstanceEvent> createProcessInstance(DeploymentEvent event) {
+        Process firstProcess = event.getProcesses().get(0);
+        return zeebeClient.newCreateInstanceCommand()
+                .bpmnProcessId(firstProcess.getBpmnProcessId())
+                .latestVersion()
+                .send();
+    }
+
+    /**
      * Deploys the most recent process to a Zeebe Server
      * 
      * @param filePath
-     * @return Optional with the filePath of the deployed process
      */
-    public Optional<DeploymentEvent> deployMostRecentProcess() {
+    public ZeebeFuture<DeploymentEvent> deployMostRecentProcess() {
         return deployProcess(processes.peek());
     }
 
     /**
-     * Deploys a process to a Zeebe Server
+     * Deploy a process to a Zeebe Server
      * 
      * @param filePath
-     * @return Optional with the filePath of the deployed process
      */
-    public Optional<DeploymentEvent> deployProcess(String filePath) {
-        try {
-            return Optional.of(zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send().join());
-        } catch (Exception e) {
-            logger.error("Failed to deploy BPMN file at " + filePath, e);
-            return Optional.empty();
-        }
+    public ZeebeFuture<DeploymentEvent> deployProcess(String filePath) {
+        return zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
     }
 
     /**

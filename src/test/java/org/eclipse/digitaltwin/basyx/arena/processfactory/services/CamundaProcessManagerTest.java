@@ -28,7 +28,7 @@ class CamundaProcessManagerTest {
         CamundaProcessManager processManager = new CamundaProcessManager(settings, zeebeClient);
         processManager.addProcess(getResourceFromClasspath(TEST_BPMN_FILENAME), TEST_BPMN_FILENAME);
 
-        DeploymentEvent deploymentEvent = processManager.deployMostRecentProcess().get();
+        DeploymentEvent deploymentEvent = processManager.deployMostRecentProcess().join();
 
         assertThat(deploymentEvent).isNotNull();
         assertThat(deploymentEvent.getProcesses()).isNotEmpty();

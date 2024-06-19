@@ -1,5 +1,7 @@
 package org.eclipse.digitaltwin.basyx.arena.processfactory.controllers;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.services.CamundaProcessManager;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,13 @@ public class OperationController {
     }
 
     @PostMapping(DEPLOY_PROCESS_MAPPING)
-    public ResponseEntity<OperationVariable[]> deployProcessOperation(@RequestBody OperationVariable[] requestData) {
+    public CompletableFuture<ResponseEntity<OperationVariable[]>> deployProcessOperation(
+            @RequestBody OperationVariable[] requestData) {
         return camundaProcessManager.deployMostRecentProcess()
-                .map(filePath -> new ResponseEntity<>(requestData, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(requestData, HttpStatus.INTERNAL_SERVER_ERROR));
+                .thenApply(camundaProcessManager::createProcessInstance)
+                .thenApply(processEvent -> new ResponseEntity<>(requestData, HttpStatus.OK))
+                .exceptionally(processEvent -> new ResponseEntity<>(requestData, HttpStatus.INTERNAL_SERVER_ERROR))
+                .toCompletableFuture();
     }
 
 }
