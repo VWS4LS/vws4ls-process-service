@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.response.DeploymentEvent;
 
 /**
  * Manages BPMN processes in a configured system directory
@@ -44,7 +45,7 @@ public class CamundaProcessManager {
      * @param filePath
      * @return Optional with the filePath of the deployed process
      */
-    public Optional<String> deployMostRecentProcess() {
+    public Optional<DeploymentEvent> deployMostRecentProcess() {
         return deployProcess(processes.peek());
     }
 
@@ -54,10 +55,9 @@ public class CamundaProcessManager {
      * @param filePath
      * @return Optional with the filePath of the deployed process
      */
-    public Optional<String> deployProcess(String filePath) {
+    public Optional<DeploymentEvent> deployProcess(String filePath) {
         try {
-            zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
-            return Optional.of(filePath);
+            return Optional.of(zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send().join());
         } catch (Exception e) {
             logger.error("Failed to deploy BPMN file at " + filePath, e);
             return Optional.empty();

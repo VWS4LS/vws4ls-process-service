@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.ZeebeClientBuilder;
 
 @Configuration
 @EnableConfigurationProperties({
@@ -14,7 +15,12 @@ public class CamundaConfiguration {
 
         @Bean
         public ZeebeClient getZeebeClient(CamundaSettings settings) {
-                return ZeebeClient.newClientBuilder().usePlaintext().build();
+                ZeebeClientBuilder builder = ZeebeClient.newClientBuilder().usePlaintext();
+
+                if (settings.zeebeGateway() != null || !settings.zeebeGateway().isBlank())
+                        builder.gatewayAddress(settings.zeebeGateway());
+
+                return builder.build();
         }
 
 }
