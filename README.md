@@ -5,3 +5,13 @@
   - Generates the operation 'startProcess' in AAS/SM/SMC 'Process/CurrentProcess/Operations'
     - When the operation is executed, the BPMN process should be submitted to the BPMN Engine (Camunda)
 
+## CI
+
+### Camunda 
+
+Relevant UI endpoints:
+
+- (Operate)[http://localhost:8081]
+- (Tasklist)[http://localhost:8082]
+
+Username/Password: demo/demo

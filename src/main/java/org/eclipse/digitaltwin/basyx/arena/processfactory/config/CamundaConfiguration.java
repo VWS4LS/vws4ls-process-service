@@ -17,7 +17,7 @@ public class CamundaConfiguration {
         public ZeebeClient getZeebeClient(CamundaSettings settings) {
                 ZeebeClientBuilder builder = ZeebeClient.newClientBuilder().usePlaintext();
 
-                if (settings.zeebeGateway() != null || !settings.zeebeGateway().isBlank())
+                if (settings.zeebeGateway() != null && !settings.zeebeGateway().isBlank())
                         builder.gatewayAddress(settings.zeebeGateway());
 
                 return builder.build();

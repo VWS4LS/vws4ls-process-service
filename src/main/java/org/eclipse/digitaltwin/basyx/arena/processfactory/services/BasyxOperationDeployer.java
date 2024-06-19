@@ -7,6 +7,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.QualifierKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
+import org.eclipse.digitaltwin.basyx.arena.processfactory.config.ServerSettings;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.controllers.OperationController;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,8 +25,19 @@ public class BasyxOperationDeployer {
 
     private final ConnectedSubmodelService smService;
 
-    public BasyxOperationDeployer(@Qualifier("operationsSubmodelService") ConnectedSubmodelService smService) {
+    private final ServerSettings serverSettings;
+
+    public BasyxOperationDeployer(@Qualifier("operationsSubmodelService") ConnectedSubmodelService smService,
+            ServerSettings serverSettings) {
         this.smService = smService;
+        this.serverSettings = serverSettings;
+    }
+
+    /**
+     * Deploy all operations using server.externalUrl property as baseUrl
+     */
+    public void deployOperations() {
+        deployOperations(serverSettings.externalUrl());
     }
 
     public void deployOperations(String baseUrl) {

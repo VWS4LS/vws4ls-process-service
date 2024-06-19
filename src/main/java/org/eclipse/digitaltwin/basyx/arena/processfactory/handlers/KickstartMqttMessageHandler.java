@@ -10,8 +10,6 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * When a mqtt message is received, a BaSyx operation is deployed and a managed
  * process is added
@@ -23,21 +21,19 @@ public class KickstartMqttMessageHandler implements MessageHandler {
     private final CamundaProcessManager processManager;
     private final BasyxOperationDeployer operationDeployer;
     private final BasyxProcessReader processReader;
-    private final HttpServletRequest httpServletRequest;
 
     public KickstartMqttMessageHandler(CamundaProcessManager processManager, BasyxProcessReader processReader,
-            BasyxOperationDeployer operationDeployer, HttpServletRequest httpServletRequest) {
+            BasyxOperationDeployer operationDeployer) {
         this.processManager = processManager;
         this.processReader = processReader;
         this.operationDeployer = operationDeployer;
-        this.httpServletRequest = httpServletRequest;
     }
 
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
         try {
             processManager.addProcessResource(processReader.readProcess(), null);
-            operationDeployer.deployOperations(httpServletRequest.getRequestURL().toString());
+            operationDeployer.deployOperations();
         } catch (IOException e) {
             throw new MessagingException(e.getMessage());
         }

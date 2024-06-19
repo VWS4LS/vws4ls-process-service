@@ -3,6 +3,7 @@ package org.eclipse.digitaltwin.basyx.arena.processfactory.services;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.basyx.arena.processfactory.config.ServerSettings;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,9 @@ class BasyxOperationDeployerTest {
 
     @Test
     void testDeployOperations() {
-        BasyxOperationDeployer opDeployer = new BasyxOperationDeployer(service);
+        BasyxOperationDeployer opDeployer = new BasyxOperationDeployer(service, new ServerSettings(SERVER_BASE_URL));
 
-        opDeployer.deployOperations(SERVER_BASE_URL);
+        opDeployer.deployOperations();
 
         Operation expectedOp = BasyxOperationDeployer.buildDeployProcessOperation(SERVER_BASE_URL);
 
