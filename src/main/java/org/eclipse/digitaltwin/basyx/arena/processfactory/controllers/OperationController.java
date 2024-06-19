@@ -25,7 +25,9 @@ public class OperationController {
     public CompletableFuture<ResponseEntity<OperationVariable[]>> deployProcessOperation(
             @RequestBody OperationVariable[] requestData) {
         return camundaProcessManager.deployMostRecentProcess()
-                .thenApply(camundaProcessManager::createProcessInstance)
+                .thenCompose(deployedProcess -> camundaProcessManager.killAllRunningProcesses()
+                        .thenApply(p -> deployedProcess))
+                .thenCompose(camundaProcessManager::createProcessInstance)
                 .thenApply(processEvent -> new ResponseEntity<>(requestData, HttpStatus.OK))
                 .exceptionally(processEvent -> new ResponseEntity<>(requestData, HttpStatus.INTERNAL_SERVER_ERROR))
                 .toCompletableFuture();

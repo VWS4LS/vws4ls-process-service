@@ -26,7 +26,7 @@ class CamundaProcessManagerTest {
     @Test
     void deployMostRecentProcess() throws IOException {
         CamundaProcessManager processManager = new CamundaProcessManager(settings, zeebeClient);
-        processManager.addProcess(getResourceFromClasspath(TEST_BPMN_FILENAME), TEST_BPMN_FILENAME);
+        processManager.addProcessResource(getResourceFromClasspath(TEST_BPMN_FILENAME), TEST_BPMN_FILENAME);
 
         DeploymentEvent deploymentEvent = processManager.deployMostRecentProcess().join();
 

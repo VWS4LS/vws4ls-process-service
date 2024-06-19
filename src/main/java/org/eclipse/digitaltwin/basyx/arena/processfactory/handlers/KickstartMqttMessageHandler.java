@@ -36,7 +36,7 @@ public class KickstartMqttMessageHandler implements MessageHandler {
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
         try {
-            processManager.addProcess(processReader.readProcess(), null);
+            processManager.addProcessResource(processReader.readProcess(), null);
             operationDeployer.deployOperations(httpServletRequest.getRequestURL().toString());
         } catch (IOException e) {
             throw new MessagingException(e.getMessage());

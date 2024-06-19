@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
 import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.ZeebeFuture;
+import io.camunda.zeebe.client.api.response.CancelProcessInstanceResponse;
 import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.Process;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
@@ -30,7 +34,8 @@ public class CamundaProcessManager {
 
     private final CamundaSettings settings;
     private final ZeebeClient zeebeClient;
-    private Deque<String> processes = new ArrayDeque<>();
+    private Deque<String> processResources = new ArrayDeque<>();
+    private Deque<Long> processes = new ArrayDeque<>();
 
     public CamundaProcessManager(CamundaSettings settings, ZeebeClient zeebeClient) {
         this.settings = settings;
@@ -43,12 +48,23 @@ public class CamundaProcessManager {
      * @param event
      * @return
      */
-    public ZeebeFuture<ProcessInstanceEvent> createProcessInstance(DeploymentEvent event) {
+    public CompletableFuture<ProcessInstanceEvent> createProcessInstance(DeploymentEvent event) {
         Process firstProcess = event.getProcesses().get(0);
+
         return zeebeClient.newCreateInstanceCommand()
                 .bpmnProcessId(firstProcess.getBpmnProcessId())
                 .latestVersion()
-                .send();
+                .send()
+                .whenComplete((p, t) -> processes.add(p.getProcessInstanceKey()))
+                .toCompletableFuture();
+    }
+
+    public CompletableFuture<List<CancelProcessInstanceResponse>> killAllRunningProcesses() {
+        return allOf(processes.stream()
+                .map(this::cancelProcess)
+                .map(e -> e.toCompletableFuture())
+                .onClose(() -> processes.clear())
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -57,7 +73,7 @@ public class CamundaProcessManager {
      * @param filePath
      */
     public ZeebeFuture<DeploymentEvent> deployMostRecentProcess() {
-        return deployProcess(processes.peek());
+        return deployProcess(processResources.peek());
     }
 
     /**
@@ -70,14 +86,14 @@ public class CamundaProcessManager {
     }
 
     /**
-     * Adds a BPMN process to be managed
+     * Adds a process resource to be managed
      * 
      * @param is
      * @param fileName, if null or blank, DEFAULT_FILENAME is used
      * @return filePath
      * @throws IOException
      */
-    public String addProcess(InputStream is, String fileName) throws IOException {
+    public String addProcessResource(InputStream is, String fileName) throws IOException {
         String folderPath = settings.managedProcessesPath();
         fileName = (fileName == null || fileName.isBlank()) ? DEFAULT_FILENAME : fileName;
         File outputFile = new File(folderPath, fileName);
@@ -90,9 +106,20 @@ public class CamundaProcessManager {
                 fos.write(buffer, 0, bytesRead);
             }
 
-            processes.add(outputFile.getAbsolutePath());
+            processResources.add(outputFile.getAbsolutePath());
 
             return outputFile.getAbsolutePath();
         }
+    }
+
+    private ZeebeFuture<CancelProcessInstanceResponse> cancelProcess(long processInstanceKey) {
+        return zeebeClient.newCancelInstanceCommand(processInstanceKey).send();
+    }
+
+    private static <T> CompletableFuture<List<T>> allOf(List<CompletableFuture<T>> futuresList) {
+        CompletableFuture<Void> allFuturesResult = CompletableFuture
+                .allOf(futuresList.toArray(new CompletableFuture[futuresList.size()]));
+        return allFuturesResult
+                .thenApply(v -> futuresList.stream().map(CompletableFuture::join).collect(Collectors.<T>toList()));
     }
 }
