@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BasyxOperationDeployer {
+    public static final String DEPLOY_PROCESS_OP_IDSHORT = "deployProcess";
+    public static final String DEPLOY_PROCESS_OP_QUALIFIER_TYPE = "invocationDelegation";
+
     private final ConnectedSubmodelService smService;
 
     public BasyxOperationDeployer(@Qualifier("operationsSubmodelService") ConnectedSubmodelService smService) {
@@ -37,12 +40,12 @@ public class BasyxOperationDeployer {
         return List.of(buildDeployProcessOperation(baseUrl));
     }
 
-    private static Operation buildDeployProcessOperation(String baseUrl) {
+    protected static Operation buildDeployProcessOperation(String baseUrl) {
         return new DefaultOperation.Builder()
-                .idShort("deployProcess")
+                .idShort(DEPLOY_PROCESS_OP_IDSHORT)
                 .qualifiers(new DefaultQualifier.Builder()
                         .kind(QualifierKind.CONCEPT_QUALIFIER)
-                        .type("invocationDelegation")
+                        .type(DEPLOY_PROCESS_OP_QUALIFIER_TYPE)
                         .valueType(DataTypeDefXsd.STRING)
                         .value(baseUrl + OperationController.DEPLOY_PROCESS_MAPPING)
                         .build())
