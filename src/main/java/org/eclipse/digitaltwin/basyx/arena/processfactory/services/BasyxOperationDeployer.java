@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.QualifierKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.ServerSettings;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.controllers.OperationController;
@@ -55,12 +58,24 @@ public class BasyxOperationDeployer {
     protected static Operation buildDeployProcessOperation(String baseUrl) {
         return new DefaultOperation.Builder()
                 .idShort(DEPLOY_PROCESS_OP_IDSHORT)
+                .inputVariables(buildOperationVariable(DataTypeDefXsd.STRING, "input"))
+                .outputVariables(buildOperationVariable(DataTypeDefXsd.STRING, "output"))
                 .qualifiers(new DefaultQualifier.Builder()
                         .kind(QualifierKind.CONCEPT_QUALIFIER)
                         .type(DEPLOY_PROCESS_OP_QUALIFIER_TYPE)
                         .valueType(DataTypeDefXsd.STRING)
-                        .value(baseUrl + OperationController.DEPLOY_PROCESS_MAPPING)
+                        .value(buildOperationURL(baseUrl))
                         .build())
+                .build();
+    }
+
+    private static String buildOperationURL(String baseUrl) {
+        return baseUrl + OperationController.DEPLOY_PROCESS_MAPPING;
+    }
+
+    private static OperationVariable buildOperationVariable(DataTypeDefXsd dataType, String idShort) {
+        return new DefaultOperationVariable.Builder()
+                .value(new DefaultProperty.Builder().idShort(idShort).valueType(dataType).build())
                 .build();
     }
 }

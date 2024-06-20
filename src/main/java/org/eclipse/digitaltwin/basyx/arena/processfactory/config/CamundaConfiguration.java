@@ -1,5 +1,7 @@
 package org.eclipse.digitaltwin.basyx.arena.processfactory.config;
 
+import java.net.URI;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +20,7 @@ public class CamundaConfiguration {
                 ZeebeClientBuilder builder = ZeebeClient.newClientBuilder().usePlaintext();
 
                 if (settings.zeebeGateway() != null && !settings.zeebeGateway().isBlank())
-                        builder.gatewayAddress(settings.zeebeGateway());
+                        builder.grpcAddress(URI.create(settings.zeebeGateway()));
 
                 return builder.build();
         }
