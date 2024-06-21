@@ -2,6 +2,7 @@ version: "3.9"
 services:
   mqtt:
     image: eclipse-mosquitto:2.0.15
+    network_mode: "host"
     ports:
       - 1884:1884
     volumes:
@@ -15,6 +16,7 @@ services:
       
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    network_mode: "host"
     environment:
       - SERVER_PORT=8081
     volumes:

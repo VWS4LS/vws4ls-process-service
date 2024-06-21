@@ -18,15 +18,28 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.process.test.ObjectMapperConfig;
 import io.camunda.zeebe.process.test.assertions.BpmnAssert;
-import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
+import io.camunda.zeebe.process.test.extension.testcontainer.ContainerProperties;
+import io.camunda.zeebe.process.test.extension.testcontainer.ContainerizedEngine;
+import io.camunda.zeebe.process.test.extension.testcontainer.EngineContainer;
+import io.camunda.zeebe.process.test.extension.testcontainer.RecordStreamSourceImpl;
+import io.camunda.zeebe.process.test.filters.RecordStream;
 import io.camunda.zeebe.process.test.inspections.InspectionUtility;
 import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 
-@ZeebeProcessTest
+
 @SpringBootTest(classes = {
-        ProcessfactoryApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+        ProcessfactoryApplication.class
+}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CompleteScenarioIT {
 
     static final String BASYX_OPERATIONSSMURL = "http://localhost:8081/submodels/aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vNjU5Ml85MDMyXzYwMzJfNjc2Nw%3D%3D";
@@ -105,4 +118,23 @@ class CompleteScenarioIT {
         Thread.sleep(3000);
     }
 
+    @TestConfiguration
+    static class ZeebeTestConfig {
+        @Bean
+        @Primary
+        @Lazy
+        public ZeebeClient zeebeClient(ObjectMapper objectMapper) {
+            EngineContainer container = EngineContainer.getContainer();
+            container.start();
+            ContainerizedEngine engine = new ContainerizedEngine(container.getHost(),
+                    container.getMappedPort(ContainerProperties.getContainerPort()),
+                    container.getMappedPort(ContainerProperties.getGatewayPort()));
+            engine.start();
+            ObjectMapperConfig.initObjectMapper(objectMapper);
+            ZeebeClient client = engine.createClient(objectMapper);
+            RecordStream recordStream = RecordStream.of(new RecordStreamSourceImpl(engine));
+            BpmnAssert.initRecordStream(recordStream);
+            return client;
+        }
+    }
 }
