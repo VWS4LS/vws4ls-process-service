@@ -36,8 +36,6 @@ services:
       start_period: 30s
     volumes:
       - zeebe:/usr/local/zeebe/data
-    networks:
-      - camunda-platform
     depends_on:
       - elasticsearch
 
@@ -58,8 +56,6 @@ services:
       timeout: 1s
       retries: 5
       start_period: 30s
-    networks:
-      - camunda-platform
     depends_on:
       - zeebe
       - elasticsearch
@@ -82,8 +78,6 @@ services:
       timeout: 1s
       retries: 5
       start_period: 30s
-    networks:
-      - camunda-platform
     depends_on:
       - zeebe
       - elasticsearch
@@ -107,9 +101,7 @@ services:
       timeout: 1s
       retries: 5
       start_period: 30s
-    env_file: connector-secrets.txt
-    networks:
-      - camunda-platform
+    env_file: config/camunda/connector-secrets.txt
     depends_on:
       - zeebe
       - operate
@@ -139,8 +131,6 @@ services:
       retries: 3
     volumes:
       - elastic:/usr/share/elasticsearch/data
-    networks:
-      - camunda-platform
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
@@ -149,8 +139,6 @@ services:
       - 5601:5601
     volumes:
       - kibana:/usr/share/kibana/data
-    networks:
-      - camunda-platform
     depends_on:
       - elasticsearch
     profiles:
@@ -160,6 +148,3 @@ volumes:
   zeebe:
   elastic:
   kibana:
-
-networks:
-  camunda-platform:

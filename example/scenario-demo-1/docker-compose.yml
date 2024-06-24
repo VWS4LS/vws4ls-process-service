@@ -1,4 +1,6 @@
 version: "3.9"
+include:
+  - docker-compose-camunda.yml
 services:
   mqtt:
     image: eclipse-mosquitto:2.0.15
@@ -12,8 +14,6 @@ services:
       retries: 3
       start_period: 1s
       timeout: 10s   
-    networks:
-      - arena36-scenario1
 
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
@@ -21,12 +21,10 @@ services:
       - ./config/aas-env.properties:/application/application.properties
       - ./config/aas:/application/aas
     ports:
-        - 8081:8081
+        - 8091:8081
     depends_on:
         mqtt:
             condition: service_healthy
-    networks:
-      - arena36-scenario1
       
   arena36-processfactory:
     image: arena36/processfactory:0.0.1-SNAPSHOT
@@ -37,10 +35,3 @@ services:
     depends_on:
       aas-env:
         condition: service_healthy
-    networks:
-      - arena36-scenario1
-
-networks:
-  arena36-scenario1:
-    name: arena36-scenario1 
-    driver: bridge
