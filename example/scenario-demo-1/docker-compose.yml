@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  mqtt:
+    image: eclipse-mosquitto:2.0.15
+    ports:
+      - 1884:1884
+    volumes:
+      - ./config/mosquitto:/mosquitto/config
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-p", "1884", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3"]
+      interval: 5s
+      retries: 3
+      start_period: 1s
+      timeout: 10s   
+    networks:
+      - arena36-scenario1
+
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    volumes:
+      - ./config/aas-env.properties:/application/application.properties
+      - ./config/aas:/application/aas
+    ports:
+        - 8081:8081
+    depends_on:
+        mqtt:
+            condition: service_healthy
+    networks:
+      - arena36-scenario1
+      
+  arena36-processfactory:
+    image: arena36/processfactory:0.0.1-SNAPSHOT
+    volumes:
+      - ./config/processfactory.properties:/application/application.properties
+    ports:
+      - 8110:8110
+    depends_on:
+      aas-env:
+        condition: service_healthy
+    networks:
+      - arena36-scenario1
+
+networks:
+  arena36-scenario1:
+    name: arena36-scenario1 
+    driver: bridge
