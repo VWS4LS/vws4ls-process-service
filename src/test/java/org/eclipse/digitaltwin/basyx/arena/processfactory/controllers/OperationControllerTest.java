@@ -40,7 +40,6 @@ import io.camunda.zeebe.process.test.inspections.InspectionUtility;
 public class OperationControllerTest {
     final static String TEST_BPMN_FILENAME = "fusebox.bpmn";
 
-    @Autowired
     private ZeebeClient zeebeClient;
 
     @Autowired

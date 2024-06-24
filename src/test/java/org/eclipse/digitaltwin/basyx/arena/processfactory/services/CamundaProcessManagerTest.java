@@ -7,7 +7,6 @@ import java.io.InputStream;
 
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import io.camunda.zeebe.client.ZeebeClient;
@@ -22,7 +21,6 @@ class CamundaProcessManagerTest {
 
     final static CamundaSettings settings = new CamundaSettings("/tmp", null);
 
-    @Autowired
     private ZeebeClient zeebeClient;
 
     @Test
