@@ -11,7 +11,7 @@
 	<groupId>org.eclipse.digitaltwin.basyx.arena</groupId>
 	<artifactId>parent</artifactId>
 	<version>${revision}</version>
-	<name>processfactory</name>
+	<name>basyx.arena</name>
 	<description>Arena36 Production Recipe Parent</description>
 
 	<developers>
@@ -27,6 +27,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>processfactory</module>
+		<module>workermanager</module>
 	</modules>
 
 	<properties>
@@ -134,7 +135,7 @@
 							<images>
 								<image>
 									<alias>service</alias>
-									<name>arena36/${project.name}:${project.version}</name>
+									<name>arena36/${project.artifactId}:${project.version}</name>
 									<build>
 										<assembly>
 											<descriptorRef>artifact</descriptorRef>

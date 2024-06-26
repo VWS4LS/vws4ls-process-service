@@ -10,6 +10,6 @@
 	</parent>
 	<artifactId>processfactory</artifactId>
 	<version>${revision}</version>
-	<name>processfactory</name>
+	<name>basyx.arena.processfactory</name>
 	<description>Manages and creates BPMN processes based on the AAS infrastructure</description>
 </project>
