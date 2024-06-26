@@ -1,8 +1,7 @@
 FROM amazoncorretto:17
 USER nobody
 WORKDIR /application
-ARG JAR_FILE=maven/*.jar
-COPY ${JAR_FILE} executable.jar
+COPY maven/*.jar executable.jar
 ARG PORT=8110
 ENV SERVER_PORT=${PORT}
 EXPOSE ${SERVER_PORT}

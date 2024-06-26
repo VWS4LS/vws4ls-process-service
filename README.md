@@ -1,40 +1,4 @@
-# Arena - ProcessFactory
-
-1. Listens to any message in the topic `topic`; when it arrives, do:
-  1. Reads the BPMN process template from SM/SE 'ubmodel/ProcessFileSE' (attachment of a fileSE)
-  2. Generates the operation 'deployProcess' in 'OperationsSubmodel'
-  3. When the operation is executed in BaSyx, the BPMN process is deployed and instantiated to the BPMN Engine
-  
-```mermaid
-sequenceDiagram
-    participant MQTT-Broker
-    participant ProcessFactory
-    participant BaSyx
-    participant BPMNEngine as BPMN Engine
-    actor User
-    
-    MQTT-Broker ->> ProcessFactory: Message Arrives at topic `topic`
-    activate ProcessFactory
-    ProcessFactory ->> BaSyx: Read BPMN process template
-    activate BaSyx
-    BaSyx -->> ProcessFactory: Return Process Template
-    deactivate BaSyx
-    ProcessFactory ->> BaSyx: Generate 'deployProcess' operation
-    activate BaSyx
-    deactivate BaSyx
-    deactivate ProcessFactory
-    User ->> BaSyx: Execute 'deployProcess' operation
-    activate BaSyx 
-    BaSyx ->> ProcessFactory: Delegate operation
-    activate ProcessFactory 
-    ProcessFactory ->> BPMNEngine: Deploy and instantiate BPMN process
-    activate BPMNEngine
-    deactivate BPMNEngine
-    ProcessFactory -->> BaSyx: return
-    deactivate ProcessFactory
-    BaSyx-->>User: return
-    deactivate BaSyx
-```
+# ARENA36 - Services
 
 ## Executing example scenario
 
@@ -43,7 +7,7 @@ sequenceDiagram
 
 The service is available at:
   - http://localhost:8110
-  - A list of the available APIs is available at http://localhost:8110/swagger-ui/index.html
+  - A list of the exposed endpoints is available at http://localhost:8110/swagger-ui/index.html
 
 3. Sending a message to the topic `test_topic` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
 4. Executing the Operation in the OperationSM deploys and instantiate the process in the Zeebe server

@@ -6,17 +6,36 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.6</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx.arena</groupId>
-	<artifactId>processfactory</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>parent</artifactId>
+	<version>${revision}</version>
 	<name>processfactory</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Arena36 Production Recipe Parent</description>
+
+	<developers>
+		<developer>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten
+				Forschung e.V.</organization>
+			<id>mateusmolina</id>
+			<name>Mateus Molina</name>
+			<email>mateus.molina@iese.fraunhofer.de</email>
+			<organizationUrl>https://www.iese.fraunhofer.de/</organizationUrl>
+		</developer>
+	</developers>
+	<packaging>pom</packaging>
+	<modules>
+		<module>processfactory</module>
+	</modules>
+
 	<properties>
+		<revision>0.0.1-SNAPSHOT</revision>
 		<java.version>17</java.version>
 		<zeebe.version>8.5.3</zeebe.version>
 		<basyx.version>2.0.0-SNAPSHOT</basyx.version>
+		<spring-integration-mqtt.version>6.3.0</spring-integration-mqtt.version>
+		<springdoc.version>2.5.0</springdoc.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,13 +53,13 @@
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-mqtt</artifactId>
-			<version>6.3.0</version>
+			<version>${spring-integration-mqtt.version}</version>
 		</dependency>
 		<dependency>
-      		<groupId>org.springdoc</groupId>
-   		    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    		<version>2.5.0</version>
-   		</dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -78,68 +97,77 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>dockerbuild</id>
+			<activation>
+				<file>
+					<exists>src/main/docker/Dockerfile</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<layers>
+								<enabled>true</enabled>
+								<includeLayerTools>true</includeLayerTools>
+							</layers>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<layers>
-						<enabled>true</enabled>
-						<includeLayerTools>true</includeLayerTools>
-					</layers>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.44.0</version>
 
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.44.0</version>
-
-				<configuration>
-					<images>
-						<image>
-							<alias>service</alias>
-							<name>arena36/processfactory:${project.version}</name>
-							<build>
-								<assembly>
-									<descriptorRef>artifact</descriptorRef>
-								</assembly>
-								<dockerFile>Dockerfile</dockerFile>
-								<contextDir>
-									${project.basedir}/src/main/docker</contextDir>
-							</build>
-						</image>
-					</images>
-				</configuration>
-				<executions>
-					<execution>
-						<id>build-docker</id>
-						<phase>package</phase>
-						<goals>
-							<goal>build</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>push-docker</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>build</goal>
-							<goal>push</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+						<configuration>
+							<images>
+								<image>
+									<alias>service</alias>
+									<name>arena36/${project.name}:${project.version}</name>
+									<build>
+										<assembly>
+											<descriptorRef>artifact</descriptorRef>
+										</assembly>
+										<dockerFile>Dockerfile</dockerFile>
+										<contextDir>
+											${project.basedir}/src/main/docker</contextDir>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-docker</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>push-docker</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
     <repositories>
         <repository>
