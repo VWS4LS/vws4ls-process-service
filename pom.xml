@@ -38,6 +38,38 @@
 		<spring-integration-mqtt.version>6.3.0</spring-integration-mqtt.version>
 		<springdoc.version>2.5.0</springdoc.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-client</artifactId>
+				<version>${basyx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
+				<version>${basyx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.camunda</groupId>
+				<artifactId>zeebe-client-java</artifactId>
+				<version>${zeebe.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.camunda</groupId>
+				<artifactId>zeebe-process-test-extension-testcontainer</artifactId>
+				<version>${zeebe.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.camunda</groupId>
+				<artifactId>zeebe-process-test-assertions</artifactId>
+				<version>${zeebe.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,16 +98,6 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-client</artifactId>
-			<version>${basyx.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.camunda</groupId>
-			<artifactId>zeebe-client-java</artifactId>
-			<version>${zeebe.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -83,18 +105,6 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.camunda</groupId>
-			<artifactId>zeebe-process-test-extension-testcontainer</artifactId>
-			<version>${zeebe.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.camunda</groupId>
-			<artifactId>zeebe-process-test-assertions</artifactId>
-			<version>${zeebe.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

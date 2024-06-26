@@ -12,4 +12,25 @@
 	<version>${revision}</version>
 	<name>basyx.arena.processfactory</name>
 	<description>Manages and creates BPMN processes based on the AAS infrastructure</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.camunda</groupId>
+			<artifactId>zeebe-client-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.camunda</groupId>
+			<artifactId>zeebe-process-test-extension-testcontainer</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.camunda</groupId>
+			<artifactId>zeebe-process-test-assertions</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
 </project>
