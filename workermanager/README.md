@@ -2,7 +2,7 @@
 
 - Listens to any MQTT message on the topic `${mqtt.topic}` from BaSyx, when it arrives, do:
   - Instantiates a new Camunda Worker for the specific device capability.
-    - For each OperationSE with a qualifer (`matched-qualifier`) of type `${basyx.qualifier.skillprovider}` do:
+    - For each OperationSE with a qualifer (`matched-qualifier`) of type `${basyx.qualifierSkillProvider}` do:
       - Instantiate a REST camunda worker of id `matched-qualifier::value`
 
 ```mermaid
@@ -14,7 +14,7 @@ sequenceDiagram
     
     MQTT-Broker ->> WorkerManager: Message Arrives at topic ${mqtt.topic}
     activate WorkerManager
-    WorkerManager ->> BaSyx: Query for OperationSE with a qualifier of type ${basyx.qualifier.skillprovider}   
+    WorkerManager ->> BaSyx: Query for OperationSE with a qualifier of type ${basyx.qualifierSkillProvider}   
     activate BaSyx
     BaSyx -->> WorkerManager: result
     deactivate BaSyx
@@ -40,7 +40,11 @@ An example configuration file is found at the [example/scenario-demo-1](../examp
 
 | property | defaultValue | description |
 | -- | -- | -- |
+| mqtt.hostname | - | MQTT Broker hostname |
+| mqtt.port | - | MQTT Broker port |
+| mqtt.username | - | MQTT Broker username |
+| mqtt.password | - | MQTT Broker password |
 | mqtt.topic | testTopic | MQTT topic to listen to |
 | basyx.aasrepositoryUrl | - | AasRepository to realize queries |
-| basyx.qualifier.skillprovider | bpmn-service | OperationSE qualifier for skill providers |
+| basyx.qualifierSkillProvider | bpmn-service | OperationSE qualifier for skill providers |
 | camunda.zeebeGateway | - | Zeebe gRPC endpoint |
