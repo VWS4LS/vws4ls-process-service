@@ -6,15 +6,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Qualifier;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.ConnectedAasManager;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.config.BasyxSettings;
+import org.eclipse.digitaltwin.basyx.arena.workermanager.services.helpers.OperationSkillBuilder;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.Skill;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.SkillReader;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class BasyxSkillReader implements SkillReader {
 
     private final String qualifierTypeOfSkillProvider;
-    private final String aasRepositoryUrl;
     private final ConnectedAasManager aasManager;
     private final ConnectedAasRepository aasRepository;
 
@@ -30,7 +29,6 @@ public class BasyxSkillReader implements SkillReader {
 
     public BasyxSkillReader(BasyxSettings settings, ConnectedAasRepository aasRepository,
             ConnectedAasManager aasManager) {
-        this.aasRepositoryUrl = settings.aasRepositoryUrl();
         this.qualifierTypeOfSkillProvider = settings.qualifierSkillProvider();
         this.aasManager = aasManager;
         this.aasRepository = aasRepository;
@@ -63,27 +61,20 @@ public class BasyxSkillReader implements SkillReader {
     private CompletableFuture<List<Skill>> readSkillsFromSubmodel(ConnectedSubmodelService submodelService) {
         return CompletableFuture
                 .supplyAsync(() -> submodelService.getSubmodelElements(new PaginationInfo(null, null)).getResult().stream()
-                        .map(se -> getSkillFromSubmodelElementIfAny(submodelService.getSubmodel().getId(), se))
+                        .filter(Operation.class::isInstance)
+                        .map(Operation.class::cast)
+                        .map(op -> getSkillFromSubmodelElementIfAny(submodelService, op))
                         .flatMap(Optional::stream)
                         .toList());
     }
 
-    private Optional<Skill> getSkillFromSubmodelElementIfAny(String submodelId, SubmodelElement se) {
-        Optional<String> skillId = se.getQualifiers().stream()
+    private Optional<Skill> getSkillFromSubmodelElementIfAny(ConnectedSubmodelService submodelService,
+            Operation operation) {
+        Optional<String> skillId = operation.getQualifiers().stream()
                 .filter(qualifier -> qualifier.getType().equals(qualifierTypeOfSkillProvider))
                 .findFirst().map(Qualifier::getValue);
 
-        return skillId.map(id -> new FullyQualifiedOperation(submodelId, se.getIdShort(), id))
-                .map(this::buildSkill);
-    }
-
-    private Skill buildSkill(FullyQualifiedOperation operation) {
-        return new Skill(operation.skillId(), buildSkillEndpoint(operation));
-    }
-
-    private String buildSkillEndpoint(FullyQualifiedOperation operation) {
-        String submodelIdBase64 = Base64UrlEncoder.encode(operation.submodelId());
-        return aasRepositoryUrl + String.format(OPERATION_API_PATH, submodelIdBase64, operation.operationSeIdShort());
+        return skillId.map(skId -> OperationSkillBuilder.buildSkill(skId, operation, submodelService));
     }
 
     static CompletableFuture<List<Skill>> getAllOf(List<CompletableFuture<List<Skill>>> futures) {
@@ -95,6 +86,4 @@ public class BasyxSkillReader implements SkillReader {
                 .collect(Collectors.toList()));
     }
 
-    record FullyQualifiedOperation(String submodelId, String operationSeIdShort, String skillId) {
-    }
 }
