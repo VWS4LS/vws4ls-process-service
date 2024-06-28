@@ -2,6 +2,7 @@ package org.eclipse.digitaltwin.basyx.arena.workermanager.config;
 
 import java.util.Arrays;
 
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.ConnectedAasManager;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
@@ -16,6 +17,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         BasyxSettings.class
 })
 public class BasyxConfiguration {
+
+    public ConnectedAasManager getAasManager(BasyxSettings settings) {
+        return new ConnectedAasManager(settings.aasRegistryUrl(), settings.aasRepositoryUrl(),
+                settings.submodelRegistryUrl(), settings.submodelRepositoryUrl());
+    }
 
     public ConnectedAasRepository getAasRepository(BasyxSettings settings) {
         return new ConnectedAasRepository(settings.aasRepositoryUrl());

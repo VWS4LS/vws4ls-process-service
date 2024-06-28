@@ -42,7 +42,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasrepository-client</artifactId>
+				<artifactId>basyx.aasenvironment-client</artifactId>
 				<version>${basyx.version}</version>
 			</dependency>
 			<dependency>
