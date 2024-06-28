@@ -17,8 +17,6 @@ services:
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
     network_mode: "host"
-    environment:
-      - SERVER_PORT=8081
     volumes:
       - ./env-config/aas-env.properties:/application/application.properties
       - ./env-config/aas:/application/aas
@@ -26,5 +24,28 @@ services:
         - 8081:8081
     depends_on:
         mqtt:
-            condition: service_healthy
-            
+          condition: service_healthy
+        aas-registry:
+          condition: service_healthy
+        sm-registry:
+          condition: service_healthy
+
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    network_mode: "host"
+    ports:
+      - '9081:9081'
+    environment:
+      - SERVER_PORT=9081
+    volumes:
+      - ./env-config/aas-registry.yml:/workspace/config/application.yml
+
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    network_mode: "host"
+    ports:
+      - '9082:9082'
+    environment:
+      - SERVER_PORT=9082
+    volumes:
+      - ./env-config/sm-registry.yml:/workspace/config/application.yml
