@@ -14,11 +14,11 @@ import io.camunda.zeebe.client.api.worker.JobWorker;
 import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
 
 @ZeebeProcessTest
-public class ZeebeWorkerManagerTest {
+class ZeebeWorkerManagerTest {
 
         ZeebeClient zeebeClient;
 
-        private static final String JOB_ID = "test-skill";
+        static final String JOB_ID = "test-skill";
 
         @Test
         void testDeployWorker() throws InterruptedException {
@@ -61,7 +61,7 @@ public class ZeebeWorkerManagerTest {
                 verify(testListener, times(1)).call(any());
         }
 
-        private void deployAndInstantiateTestBPMN() {
+        void deployAndInstantiateTestBPMN() {
                 zeebeClient.newDeployResourceCommand().addResourceFromClasspath("test-skill.bpmn").send()
                                 .thenCompose(p -> zeebeClient.newCreateInstanceCommand()
                                                 .bpmnProcessId(p.getProcesses().get(0).getBpmnProcessId())
@@ -73,7 +73,7 @@ public class ZeebeWorkerManagerTest {
                 return new Skill(skillId, listener::call);
         }
 
-        private class TestListener {
+        class TestListener {
                 public <T> T call(T in) {
                         return in;
                 }
