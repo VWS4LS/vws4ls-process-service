@@ -25,6 +25,6 @@ public class KickstartMqttMessageHandler implements MessageHandler {
 
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
-        skillReader.readSkills().thenCompose(skillDispatcher::synchronizeSkills);
+        skillReader.readSkills().thenApply(skillDispatcher::synchronizeSkills);
     }
 }

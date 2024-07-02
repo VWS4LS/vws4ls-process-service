@@ -7,7 +7,7 @@ import java.util.Collection;
  * 
  * @author mateusmolina
  */
-public interface SkillWorkerDispatcher {
+public interface SkillWorkerDispatcher<T> {
 
     /**
      * Synchronize the collection of skills with the current dispatched skill
@@ -20,6 +20,6 @@ public interface SkillWorkerDispatcher {
      * @param skills
      * @return SynchronizeSkillsResult
      */
-    SynchronizeSkillsResult synchronizeSkills(Collection<Skill> skills);
+    SynchronizeSkillsResult<T> synchronizeSkills(Collection<Skill> skills);
 
 }
