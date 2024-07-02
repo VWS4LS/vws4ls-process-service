@@ -6,7 +6,7 @@ services:
     ports:
       - 1884:1884
     volumes:
-      - ./env-config/mosquitto:/mosquitto/config
+      - ./config/mosquitto:/mosquitto/config
     healthcheck:
       test: ["CMD-SHELL", mosquitto_sub -p 1884 -t 'topic' -C 1 -E -i probe -W 3]
       interval: 5s
@@ -18,8 +18,8 @@ services:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
     network_mode: "host"
     volumes:
-      - ./env-config/aas-env.properties:/application/application.properties
-      - ./env-config/aas:/application/aas
+      - ./config/aas-env.properties:/application/application.properties
+      - ./config/aas:/application/aas
     ports:
         - 8081:8081
     depends_on:
@@ -38,7 +38,7 @@ services:
     environment:
       - SERVER_PORT=9081
     volumes:
-      - ./env-config/aas-registry.yml:/workspace/config/application.yml
+      - ./config/aas-registry.yml:/workspace/config/application.yml
 
   sm-registry:
     image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
@@ -48,4 +48,4 @@ services:
     environment:
       - SERVER_PORT=9082
     volumes:
-      - ./env-config/sm-registry.yml:/workspace/config/application.yml
+      - ./config/sm-registry.yml:/workspace/config/application.yml
