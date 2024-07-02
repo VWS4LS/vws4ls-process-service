@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class KickstartMqttMessageHandler implements MessageHandler {
 
-    private final SkillWorkerDispatcher<?> skillDispatcher;
+    private final SkillWorkerDispatcher skillDispatcher;
     private final SkillReader skillReader;
 
-    public KickstartMqttMessageHandler(SkillWorkerDispatcher<?> skillDispatcher, SkillReader skillReader) {
+    public KickstartMqttMessageHandler(SkillWorkerDispatcher skillDispatcher, SkillReader skillReader) {
         this.skillDispatcher = skillDispatcher;
         this.skillReader = skillReader;
     }

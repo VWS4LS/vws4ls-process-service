@@ -7,11 +7,11 @@ import java.util.Collection;
  * 
  * @author mateusmolina
  */
-public interface SkillWorkerDispatcher<T> {
+public interface SkillWorkerDispatcher {
 
     /**
      * Synchronize the collection of skills with the current dispatched skill
-     * workers. This operation performs the following:
+     * workers. This operation performs the following
      * 
      * - dispatch workers for new skills;
      * - abort already dispatched workers, which are not within the collection;
@@ -20,6 +20,6 @@ public interface SkillWorkerDispatcher<T> {
      * @param skills
      * @return SynchronizeSkillsResult
      */
-    SynchronizeSkillsResult<T> synchronizeSkills(Collection<Skill> skills);
+    SynchronizeSkillsResult<?> synchronizeSkills(Collection<Skill> skills);
 
 }

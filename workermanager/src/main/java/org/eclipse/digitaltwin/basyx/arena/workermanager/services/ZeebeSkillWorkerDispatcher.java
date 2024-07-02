@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import io.camunda.zeebe.client.api.worker.JobWorker;
 
 @Component
-public class ZeebeSkillWorkerDispatcher implements SkillWorkerDispatcher<JobWorker> {
+public class ZeebeSkillWorkerDispatcher implements SkillWorkerDispatcher {
 
     private final ZeebeWorkerManager workerManager;
     private final Deque<DispatchedSkillWorker<JobWorker>> dispatchedSkillsWorkers = new ArrayDeque<>();
