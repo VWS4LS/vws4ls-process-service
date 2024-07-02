@@ -1,7 +1,6 @@
 package org.eclipse.digitaltwin.basyx.arena.workermanager.skills;
 
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Dispatches workers, capable of perfoming a skills
@@ -9,13 +8,6 @@ import java.util.concurrent.CompletableFuture;
  * @author mateusmolina
  */
 public interface SkillWorkerDispatcher {
-
-    /**
-     * Dispatches a worker capable of performing the passed skill
-     * 
-     * @param skill
-     */
-    CompletableFuture<DispatchedSkillWorker> dispatchSkillWorker(Skill skill);
 
     /**
      * Synchronize the collection of skills with the current dispatched skill
@@ -26,7 +18,8 @@ public interface SkillWorkerDispatcher {
      * - redispatch workers, from which the skills changed.
      * 
      * @param skills
+     * @return SynchronizeSkillsResult
      */
-    CompletableFuture<SynchronizeSkillsResult> synchronizeSkills(Collection<Skill> skills);
+    SynchronizeSkillsResult synchronizeSkills(Collection<Skill> skills);
 
 }
