@@ -18,11 +18,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 })
 public class BasyxConfiguration {
 
+    @Bean
     public ConnectedAasManager getAasManager(BasyxSettings settings) {
         return new ConnectedAasManager(settings.aasRegistryUrl(), settings.aasRepositoryUrl(),
                 settings.submodelRegistryUrl(), settings.submodelRepositoryUrl());
     }
 
+    @Bean
     public ConnectedAasRepository getAasRepository(BasyxSettings settings) {
         return new ConnectedAasRepository(settings.aasRepositoryUrl());
     }
