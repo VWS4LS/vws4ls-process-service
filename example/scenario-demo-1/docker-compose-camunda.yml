@@ -82,29 +82,29 @@ services:
       - zeebe
       - elasticsearch
 
-  connectors: # https://docs.camunda.io/docs/components/integration-framework/connectors/out-of-the-box-connectors/available-connectors-overview/
-    image: camunda/connectors-bundle:${CAMUNDA_CONNECTORS_VERSION}
-    container_name: connectors
-    ports:
-      - "8085:8080"
-    environment:
-      - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
-      - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-      - CAMUNDA_OPERATE_CLIENT_URL=http://operate:8080
-      - CAMUNDA_OPERATE_CLIENT_USERNAME=demo
-      - CAMUNDA_OPERATE_CLIENT_PASSWORD=demo
-      - management.endpoints.web.exposure.include=health
-      - management.endpoint.health.probes.enabled=true
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health/readiness" ]
-      interval: 30s
-      timeout: 1s
-      retries: 5
-      start_period: 30s
-    env_file: config/camunda/connector-secrets.txt
-    depends_on:
-      - zeebe
-      - operate
+  # connectors: # https://docs.camunda.io/docs/components/integration-framework/connectors/out-of-the-box-connectors/available-connectors-overview/
+  #   image: camunda/connectors-bundle:${CAMUNDA_CONNECTORS_VERSION}
+  #   container_name: connectors
+  #   ports:
+  #     - "8085:8080"
+  #   environment:
+  #     - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
+  #     - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
+  #     - CAMUNDA_OPERATE_CLIENT_URL=http://operate:8080
+  #     - CAMUNDA_OPERATE_CLIENT_USERNAME=demo
+  #     - CAMUNDA_OPERATE_CLIENT_PASSWORD=demo
+  #     - management.endpoints.web.exposure.include=health
+  #     - management.endpoint.health.probes.enabled=true
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health/readiness" ]
+  #     interval: 30s
+  #     timeout: 1s
+  #     retries: 5
+  #     start_period: 30s
+  #   env_file: config/camunda/connector-secrets.txt
+  #   depends_on:
+  #     - zeebe
+  #     - operate
 
   elasticsearch: # https://hub.docker.com/_/elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
