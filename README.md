@@ -1,21 +1,25 @@
 # ARENA36 - Services
 
-## Executing example scenario 1 [^1] [^2]
+![](assets/basyx-arena-cd.drawio.svg)
+
+## Executing example scenario 1 [^*] [^**]
 
 1. Run `mvn clean package -DskipTests` to generate the docker and image and push to the local Docker repository
 2. Execute [scenario-demo-1/docker-compose](example/scenario-demo-1/docker-compose.yml) via `docker compose up`
 
 The services are available at:
-  - http://localhost:8110 (ProcessFactory)
-  - http://localhost:8111 (WorkerManager)
+
+- http://localhost:8110 (ProcessFactory)
   - A list of the exposed endpoints is available at http://localhost:8110/swagger-ui/index.html
+- http://localhost:8111 (WorkerManager)
   - A list of the exposed endpoints is available at http://localhost:8111/swagger-ui/index.html
 
-3. Sending a message to the topic `test_topic` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
-4. Executing the Operation in the OperationSM deploys and instantiate the process in the Zeebe server
+- Sending a message to the topic `test_topic` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
+- Executing the Operation in the OperationSM deploys and instantiate the process in the Zeebe server
+- Sending a message to the topic `update_skills` (re)deploys all Zeebe Job workers based on all operations found with the qualifier::type="skill-provider". The Zeebe Job Worker is associated with the type of the corresponding qualifier::value.
 
-[^1]: Tested under Ubuntu 22.04 + Adoptium JDK21
-[^2]: `localhost` is assumed as host.
+[^*]: Tested under Ubuntu 22.04 + Adoptium JDK21
+[^**]: `localhost` is assumed as host.
 
 ## Testing
 
