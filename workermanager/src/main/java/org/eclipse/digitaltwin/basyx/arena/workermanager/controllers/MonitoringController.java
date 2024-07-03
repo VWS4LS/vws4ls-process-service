@@ -1,9 +1,9 @@
 package org.eclipse.digitaltwin.basyx.arena.workermanager.controllers;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.digitaltwin.basyx.arena.workermanager.services.ZeebeSkillWorkerDispatcher;
-import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.DispatchedSkillWorker;
+import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.DispatchedSkill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +16,8 @@ public class MonitoringController {
     private ZeebeSkillWorkerDispatcher dispatcher;
 
     @GetMapping("/deployed-skills")
-    public ResponseEntity<List<DeploymentReport>> getDeployedSkills() {
-        return ResponseEntity.ok(dispatcher.getDispatchedSkillWorkers().stream()
-                .map(ds -> new DeploymentReport(ds, ds.worker().isOpen()))
-                .toList());
+    public ResponseEntity<Collection<DispatchedSkill>> getDeployedSkills() {
+        return ResponseEntity.ok(dispatcher.getDispatchedSkillWorkers());
     }
 
-    private record DeploymentReport(DispatchedSkillWorker<?> skillWorker, boolean healthy) {
-    }
 }

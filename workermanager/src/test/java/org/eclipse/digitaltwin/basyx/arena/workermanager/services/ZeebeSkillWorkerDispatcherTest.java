@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.DispatchedSkillWorker;
+import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.DispatchedSkill;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.Skill;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.SynchronizeSkillsResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.worker.JobWorker;
 import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
 
 @ZeebeProcessTest
@@ -35,9 +34,9 @@ class ZeebeSkillWorkerDispatcherTest {
 
         List<Skill> oldSkills = buildIterativeSkills(oldListeners);
 
-        SynchronizeSkillsResult<JobWorker> result = dispatcher.synchronizeSkills(oldSkills);
+        SynchronizeSkillsResult result = dispatcher.synchronizeSkills(oldSkills);
 
-        assertThat(result.abortedSkillWorkers()).isEmpty();
+        assertThat(result.abortedSkills()).isEmpty();
         assertThat(result.failedToDispatchAny()).isFalse();
         assertThat(extractSkills(result.dispatchedSkillWorkers())).containsExactlyInAnyOrderElementsOf(oldSkills);
 
@@ -50,7 +49,7 @@ class ZeebeSkillWorkerDispatcherTest {
         result = dispatcher.synchronizeSkills(newSkills);
 
         assertThat(result.failedToDispatchAny()).isFalse();
-        assertThat(extractSkills(result.abortedSkillWorkers()))
+        assertThat(extractSkills(result.abortedSkills()))
                 .containsExactlyInAnyOrderElementsOf(oldSkills.subList(0, 2));
         assertThat(extractSkills(result.dispatchedSkillWorkers())).containsExactlyInAnyOrderElementsOf(newSkills);
 
@@ -75,9 +74,9 @@ class ZeebeSkillWorkerDispatcherTest {
     }
 
     static Iterable<Skill> extractSkills(
-            Iterable<DispatchedSkillWorker<JobWorker>> dispatchedSkillWorkers) {
+            Iterable<DispatchedSkill> dispatchedSkillWorkers) {
         return StreamSupport.stream(dispatchedSkillWorkers.spliterator(), false)
-                .map(DispatchedSkillWorker::skill)
+                .map(DispatchedSkill::getSkill)
                 .toList();
     }
 

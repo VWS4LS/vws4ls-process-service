@@ -20,6 +20,6 @@ public interface SkillWorkerDispatcher {
      * @param skills
      * @return SynchronizeSkillsResult
      */
-    SynchronizeSkillsResult<?> synchronizeSkills(Collection<Skill> skills);
+    SynchronizeSkillsResult synchronizeSkills(Collection<Skill> skills);
 
 }
