@@ -40,11 +40,12 @@ An example configuration file is found at the [example/scenario-demo-1](../examp
 
 | property | defaultValue | description |
 | -- | -- | -- |
+| server.port | 8111 | Port to start the service | 
 | mqtt.hostname | - | MQTT Broker hostname |
 | mqtt.port | - | MQTT Broker port |
 | mqtt.username | - | MQTT Broker username |
 | mqtt.password | - | MQTT Broker password |
-| mqtt.topic | testTopic | MQTT topic to listen to |
+| mqtt.topic | - | MQTT topic to listen to |
 | basyx.aasRegistryUrl | - | AasRegistry base endpoint |
 | basyx.aasRepositoryUrl | - | AasRepository base endpoint |
 | basyx.submodelRegistryUrl | - | SubmodelRegistry base endpoint |
