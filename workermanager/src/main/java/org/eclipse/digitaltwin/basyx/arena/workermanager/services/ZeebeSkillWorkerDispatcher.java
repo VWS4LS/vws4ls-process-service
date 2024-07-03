@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -46,6 +47,10 @@ public class ZeebeSkillWorkerDispatcher implements SkillWorkerDispatcher {
         dispatchedSkillsWorkers.addAll(dispatchedWorkers);
 
         return new SynchronizeSkillsResult<>(dispatchedWorkers, abortedWorkers, failedToDispatch);
+    }
+
+    public Collection<DispatchedSkillWorker<JobWorker>> getDispatchedSkillWorkers() {
+        return Collections.unmodifiableCollection(dispatchedSkillsWorkers);
     }
 
     private Collection<DispatchedSkillWorker<JobWorker>> abortExistingWorkers(Collection<Skill> skills) {
