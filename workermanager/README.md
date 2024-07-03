@@ -45,6 +45,9 @@ An example configuration file is found at the [example/scenario-demo-1](../examp
 | mqtt.username | - | MQTT Broker username |
 | mqtt.password | - | MQTT Broker password |
 | mqtt.topic | testTopic | MQTT topic to listen to |
-| basyx.aasrepositoryUrl | - | AasRepository to realize queries |
-| basyx.qualifierSkillProvider | bpmn-service | OperationSE qualifier for skill providers |
+| basyx.aasRegistryUrl | - | AasRegistry base endpoint |
+| basyx.aasRepositoryUrl | - | AasRepository base endpoint |
+| basyx.submodelRegistryUrl | - | SubmodelRegistry base endpoint |
+| basyx.submodelRepositoryUrl | - | SubmodelRepository base endpoint |
+| basyx.qualifierSkillProvider | skill-provider | OperationSE qualifier for skill providers |
 | camunda.zeebeGateway | - | Zeebe gRPC endpoint |
