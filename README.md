@@ -1,19 +1,21 @@
 # ARENA36 - Services
 
-## Executing example scenario
+## Executing example scenario 1 [^1] [^2]
 
 1. Run `mvn clean package -DskipTests` to generate the docker and image and push to the local Docker repository
 2. Execute [scenario-demo-1/docker-compose](example/scenario-demo-1/docker-compose.yml) via `docker compose up`
 
-The service is available at:
-  - http://localhost:8110
+The services are available at:
+  - http://localhost:8110 (ProcessFactory)
+  - http://localhost:8111 (WorkerManager)
   - A list of the exposed endpoints is available at http://localhost:8110/swagger-ui/index.html
+  - A list of the exposed endpoints is available at http://localhost:8111/swagger-ui/index.html
 
 3. Sending a message to the topic `test_topic` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
 4. Executing the Operation in the OperationSM deploys and instantiate the process in the Zeebe server
 
- Note: Tested under Ubuntu 22.04 + Adoptium JDK21
-Note2: `localhost` is assumed as host.
+[^1]: Tested under Ubuntu 22.04 + Adoptium JDK21
+[^2]: `localhost` is assumed as host.
 
 ## Testing
 
@@ -22,7 +24,10 @@ Note2: `localhost` is assumed as host.
 
 ## Configuring
 
-An example configuration file is found at the [example/scenario-demo-1](example/scenario-demo-1/config/processfactory.properties). All relevant properties can be easily changed there, e.g. MQTT, Zeebe, BaSyx. 
+Please refer to the README of the individual components:
+
+- [processfactory/README](processfactory/README.md)
+- [workermanager/README](workermanager/README.md)
 
 ## Appendix
 
