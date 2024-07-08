@@ -1,4 +1,4 @@
-# ARENA36 - Services
+# ARENA2036 - Services
 
 ![](assets/basyx-arena-cd.drawio.svg)
 
