@@ -62,6 +62,7 @@ services:
 
   arena36-workermanager:
     image: arena36/workermanager:0.0.1-SNAPSHOT
+    network_mode: host
     volumes:
       - ./config/workermanager.properties:/application/application.properties
     ports:
