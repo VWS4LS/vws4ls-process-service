@@ -8,5 +8,6 @@ public record MqttSettings(
         int port,
         String username,
         String password,
-        String topic) {
+                String topic,
+                String clientId) {
 }

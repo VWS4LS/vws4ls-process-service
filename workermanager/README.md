@@ -46,6 +46,7 @@ An example configuration file is found at the [example/scenario-demo-1](../examp
 | mqtt.username | - | MQTT Broker username |
 | mqtt.password | - | MQTT Broker password |
 | mqtt.topic | - | MQTT topic to listen to |
+| mqtt.clientId | workermanager | Client ID for the MQTT connection |
 | basyx.aasRegistryUrl | - | AasRegistry base endpoint |
 | basyx.aasRepositoryUrl | - | AasRepository base endpoint |
 | basyx.submodelRegistryUrl | - | SubmodelRegistry base endpoint |

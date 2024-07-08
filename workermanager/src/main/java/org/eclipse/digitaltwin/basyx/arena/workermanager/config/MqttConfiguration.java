@@ -41,7 +41,7 @@ public class MqttConfiguration {
             MqttPahoClientFactory mqttClientFactory,
             KickstartMqttMessageHandler msgHandler) {
         return IntegrationFlow.from(
-                new MqttPahoMessageDrivenChannelAdapter("mqtt-service", mqttClientFactory, settings.topic()))
+                new MqttPahoMessageDrivenChannelAdapter(settings.clientId(), mqttClientFactory, settings.topic()))
                 .handle(msgHandler)
                 .get();
     }

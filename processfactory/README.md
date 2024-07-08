@@ -1,7 +1,7 @@
 # Arena - ProcessFactory
 
 1. Listens to any message in the topic `topic`; when it arrives, do:
-  1. Reads the BPMN process template from SM/SE 'ubmodel/ProcessFileSE' (attachment of a fileSE)
+  1. Reads the BPMN process template from SM/SE 'Submodel/ProcessFileSE' (attachment of a fileSE)
   2. Generates the operation 'deployProcess' in 'OperationsSubmodel'
   3. When the operation is executed in BaSyx, the BPMN process is deployed and instantiated to the BPMN Engine
   
@@ -49,6 +49,7 @@ An example configuration file is found at the [example/scenario-demo-1](../examp
 | mqtt.username | - | MQTT Broker username |
 | mqtt.password | - | MQTT Broker password |
 | mqtt.topic | - | MQTT topic to listen to |
+| mqtt.clientId | processfactory | Client ID for the MQTT conneciton |
 | basyx.processSmUrl | - | Base URL pointing to the ProcessSubmodel  |
 | basyx.processFileSEIdShort | - | IdShort from the SE, from which the BPMN file is read |
 | basyx.operationsSmUrl | - | Base URL pointing to the OperationsSubmodel. This is where this service's operations are going to be deployed |
