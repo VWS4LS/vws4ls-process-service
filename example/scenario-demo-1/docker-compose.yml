@@ -21,7 +21,9 @@ services:
       - ./config/aas-env.properties:/application/application.properties
       - ./config/aas:/application/aas
     ports:
-        - 8091:8081
+        - 8091:8091
+    environment:
+      - SERVER_PORT=8091
     depends_on:
         mqtt:
           condition: service_healthy
@@ -64,6 +66,20 @@ services:
       - ./config/workermanager.properties:/application/application.properties
     ports:
       - 8111:8111
+    depends_on:
+      aas-env:
+        condition: service_healthy
+
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:v2-240617
+    ports:
+      - '3000:3000'
+    environment:
+      AAS_REGISTRY_PATH: http://localhost:9081/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: http://localhost:9082/submodel-descriptors
+      AAS_REPO_PATH: http://localhost:8091/shells
+      SUBMODEL_REPO_PATH: http://localhost:8091/submodels
+      CD_REPO_PATH: http://localhost:8091/concept-descriptions
     depends_on:
       aas-env:
         condition: service_healthy
