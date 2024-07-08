@@ -21,7 +21,10 @@ class BasyxOperationDeployerTest {
 
     @BeforeEach
     void clearBasyxOperations() {
-        service.deleteSubmodelElement(BasyxOperationDeployer.DEPLOY_PROCESS_OP_IDSHORT);
+        try {
+            service.deleteSubmodelElement(BasyxOperationDeployer.DEPLOY_PROCESS_OP_IDSHORT);
+        } catch (Exception e) {
+        }
     }
 
     @Test
