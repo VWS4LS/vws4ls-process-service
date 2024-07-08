@@ -11,6 +11,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.CamundaSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.camunda.zeebe.client.ZeebeClient;
@@ -32,6 +34,8 @@ public class CamundaProcessManager {
 
     public static final String DEFAULT_FILENAME = "process.bpmn";
 
+    private static final Logger logger = LoggerFactory.getLogger(CamundaProcessManager.class);
+
     private final CamundaSettings settings;
     private final ZeebeClient zeebeClient;
     private Deque<String> processResources = new ArrayDeque<>();
@@ -51,6 +55,8 @@ public class CamundaProcessManager {
     public CompletableFuture<ProcessInstanceEvent> createProcessInstance(DeploymentEvent event) {
         Process firstProcess = event.getProcesses().get(0);
 
+        logger.info("Creating a new ProcessInstanceEvent for bpmnProcessId " + firstProcess.getBpmnProcessId());
+
         return zeebeClient.newCreateInstanceCommand()
                 .bpmnProcessId(firstProcess.getBpmnProcessId())
                 .latestVersion()
@@ -60,6 +66,8 @@ public class CamundaProcessManager {
     }
 
     public CompletableFuture<List<CancelProcessInstanceResponse>> killAllRunningProcesses() {
+        logger.info("Killing all running processes");
+
         return allOf(processes.stream()
                 .map(this::cancelProcess)
                 .map(e -> e.toCompletableFuture())
@@ -82,6 +90,8 @@ public class CamundaProcessManager {
      * @param filePath
      */
     public ZeebeFuture<DeploymentEvent> deployProcess(String filePath) {
+        logger.info("Creating DeploymentEvent for resouce at '" + filePath + "'");
+
         return zeebeClient.newDeployResourceCommand().addResourceFile(filePath).send();
     }
 

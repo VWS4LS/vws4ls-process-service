@@ -13,6 +13,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.config.ServerSettings;
 import org.eclipse.digitaltwin.basyx.arena.processfactory.controllers.OperationController;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class BasyxOperationDeployer {
     public static final String DEPLOY_PROCESS_OP_IDSHORT = "deployProcess";
     public static final String DEPLOY_PROCESS_OP_QUALIFIER_TYPE = "invocationDelegation";
+
+    private static final Logger logger = LoggerFactory.getLogger(BasyxOperationDeployer.class);
 
     private final ConnectedSubmodelService smService;
 
@@ -48,6 +52,8 @@ public class BasyxOperationDeployer {
     }
 
     private void deployOperation(Operation operation) {
+        logger.info("Deploying OperationSE '" + operation.getIdShort() + "' in Submodel '"
+                + smService.getSubmodel().getIdShort());
         smService.createSubmodelElement(operation);
     }
 
