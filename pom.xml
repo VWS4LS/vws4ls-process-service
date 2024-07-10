@@ -28,6 +28,7 @@
 	<modules>
 		<module>processfactory</module>
 		<module>workermanager</module>
+		<module>mockedcc</module>
 	</modules>
 
 	<properties>

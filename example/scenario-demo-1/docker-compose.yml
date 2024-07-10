@@ -71,6 +71,14 @@ services:
       aas-env:
         condition: service_healthy
 
+  arena36-mockedcc:
+    image: arena36/mockedcc:0.0.1-SNAPSHOT
+    ports:
+      - 8112:8112
+    depends_on:
+      aas-env:
+        condition: service_healthy
+
   aas-web-ui:
     image: eclipsebasyx/aas-gui:v2-240617
     ports:
