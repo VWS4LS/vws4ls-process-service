@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Provides test endpoints working with operations
+ * Provides test endpoints for working with operations
  * 
  * @author mateusmolina
  */

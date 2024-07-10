@@ -14,7 +14,7 @@ The services are available at:
 - http://localhost:8111 (WorkerManager)
   - A list of the exposed endpoints is available at http://localhost:8111/swagger-ui/index.html
 
-- Sending a message to the topic `test_topic` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
+- Sending a message to the topic `deploy_operation` (broker available at port 1884) automatically triggers the deployment of the operations in the configured OperationSM.
 - Executing the Operation in the OperationSM deploys and instantiate the process in the Zeebe server
 - Sending a message to the topic `update_skills` (re)deploys all Zeebe Job workers based on all operations found with the qualifier::type="skill-provider". The Zeebe Job Worker is associated with the type of the corresponding qualifier::value.
 
