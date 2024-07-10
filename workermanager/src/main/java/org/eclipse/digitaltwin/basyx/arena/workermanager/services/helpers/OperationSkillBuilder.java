@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
@@ -38,7 +39,11 @@ public class OperationSkillBuilder {
 
     static private OperationVariable buildOperationVariable(String idShort, Object value) {
         return new DefaultOperationVariable.Builder()
-                .value(new DefaultProperty.Builder().idShort(idShort).value((String) value).build()).build();
+                .value(new DefaultProperty.Builder()
+                        .idShort(idShort)
+                        .valueType(DataTypeDefXsd.STRING)
+                        .value(String.valueOf(value)).build())
+                .build();
     }
 
     static private Map<String, Object> buildMapFromOperationVariables(OperationVariable[] outputs) {
