@@ -5,6 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.Skill;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,13 +20,15 @@ import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
 class ZeebeWorkerManagerTest {
 
         ZeebeClient zeebeClient;
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         static final String JOB_ID = "test-skill";
 
         @Test
         void testDeployWorker() throws InterruptedException {
 
-                ZeebeWorkerManager workerManager = new ZeebeWorkerManager(zeebeClient);
+                ZeebeWorkerManager workerManager = new ZeebeWorkerManager(zeebeClient,
+                                executorService);
 
                 TestListener testListener = Mockito.spy(new TestListener());
 
@@ -40,7 +45,7 @@ class ZeebeWorkerManagerTest {
 
         @Test
         void testAbortWorker() throws InterruptedException {
-                ZeebeWorkerManager workerManager = new ZeebeWorkerManager(zeebeClient);
+                ZeebeWorkerManager workerManager = new ZeebeWorkerManager(zeebeClient, executorService);
 
                 TestListener testListener = Mockito.spy(new TestListener());
 

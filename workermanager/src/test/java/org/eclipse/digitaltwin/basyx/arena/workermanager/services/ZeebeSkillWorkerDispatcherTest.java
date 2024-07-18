@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.DispatchedSkill;
@@ -26,7 +27,8 @@ class ZeebeSkillWorkerDispatcherTest {
 
     @Test
     void testSynchronizeSkills() throws InterruptedException {
-        ZeebeSkillWorkerDispatcher dispatcher = new ZeebeSkillWorkerDispatcher(new ZeebeWorkerManager(zeebeClient));
+        ZeebeSkillWorkerDispatcher dispatcher = new ZeebeSkillWorkerDispatcher(
+                new ZeebeWorkerManager(zeebeClient, Executors.newSingleThreadExecutor()));
 
         List<TestListener> oldListeners = List.of(new TestListener(), new TestListener(), new TestListener()).stream()
                 .map(Mockito::spy)
