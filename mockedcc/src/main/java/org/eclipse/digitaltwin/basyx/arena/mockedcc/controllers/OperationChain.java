@@ -24,9 +24,14 @@ import org.slf4j.Logger;
  */
 public class OperationChain {
 
+    @FunctionalInterface
+    public interface OperationFunctionProvider {
+        Map<String, Object> apply(Map<String, Object> ins);
+    }
+
     private final OperationVariable[] inputVars;
 
-    private Deque<Function<Map<String, Object>, Map<String, Object>>> funs = new ArrayDeque<>();
+    private Deque<OperationFunctionProvider> funs = new ArrayDeque<>();
 
     private Logger logger;
 
@@ -38,7 +43,7 @@ public class OperationChain {
         return new OperationChain(requestData);
     }
 
-    public OperationChain map(Function<Map<String, Object>, Map<String, Object>> fun) {
+    public OperationChain map(OperationFunctionProvider fun) {
         funs.add(fun);
         return this;
     }
@@ -62,7 +67,7 @@ public class OperationChain {
         if (logger != null)
             logger.info("Received following input map: " + inputs);
 
-        for (Function<Map<String, Object>, Map<String, Object>> fun : funs) {
+        for (OperationFunctionProvider fun : funs) {
             outputs = fun.apply(outputs);
         }
 
