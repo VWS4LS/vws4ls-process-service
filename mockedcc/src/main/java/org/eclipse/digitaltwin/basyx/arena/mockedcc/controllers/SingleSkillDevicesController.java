@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.basyx.arena.common.OperationChain;
 import org.eclipse.digitaltwin.basyx.arena.mockedcc.devices.SingleSkillDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -8,15 +8,11 @@
 		<artifactId>parent</artifactId>
 		<version>${revision}</version>
 	</parent>
-	<artifactId>mockedcc</artifactId>
+	<artifactId>common</artifactId>
 	<version>${revision}</version>
-	<name>basyx.arena.mockedcc</name>
-	<description>Provides endpoints for SoAASv3 Operations</description>
+	<name>basyx.arena.common</name>
+	<description>Common components</description>
 	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx.arena</groupId>
-			<artifactId>common</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-client</artifactId>

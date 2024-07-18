@@ -1,10 +1,11 @@
-package org.eclipse.digitaltwin.basyx.arena.mockedcc.controllers;
+package org.eclipse.digitaltwin.basyx.arena.common;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,16 +25,11 @@ import org.slf4j.Logger;
  */
 public class OperationChain {
 
-    @FunctionalInterface
-    public interface OperationFunctionProvider {
-        Map<String, Object> apply(Map<String, Object> ins);
-    }
-
     private final OperationVariable[] inputVars;
 
     private Deque<OperationFunctionProvider> funs = new ArrayDeque<>();
 
-    private Logger logger;
+    private Optional<Logger> logger;
 
     private OperationChain(OperationVariable[] inputVars) {
         this.inputVars = inputVars;
@@ -43,8 +39,19 @@ public class OperationChain {
         return new OperationChain(requestData);
     }
 
+    public static OperationChain from(Map<String, Object> inputMap) {
+        return new OperationChain(buildOperationVariablesFromMap(inputMap));
+    }
+
     public OperationChain map(OperationFunctionProvider fun) {
         funs.add(fun);
+        return this;
+    }
+
+    public OperationChain mapOperation(Function<OperationVariable[], OperationVariable[]> fun) {
+        funs.add((ops) -> {
+            return buildMapFromOperationVariables(fun.apply(buildOperationVariablesFromMap(ops)));
+        });
         return this;
     }
 
@@ -61,24 +68,27 @@ public class OperationChain {
     }
 
     public OperationVariable[] end() {
-        Map<String, Object> inputs = buildMapFromOperationVariables(inputVars);
+        final Map<String, Object> inputs = buildMapFromOperationVariables(inputVars);
         Map<String, Object> outputs = inputs;
 
-        if (logger != null)
-            logger.info("Received following input map: " + inputs);
+        logger.ifPresent(l -> l.info("Received following input map: " + inputs));
 
         for (OperationFunctionProvider fun : funs) {
             outputs = fun.apply(outputs);
         }
 
-        if (logger != null)
-            logger.info("Sending following output map: " + outputs);
+        final Map<String, Object> finalOutputs = outputs;
+        logger.ifPresent(l -> l.info("Sending following output map: " + finalOutputs));
 
         return buildOperationVariablesFromMap(outputs);
     }
 
+    public Map<String, Object> endMap() {
+        return buildMapFromOperationVariables(end());
+    }
+
     public OperationChain log(Logger logger) {
-        this.logger = logger;
+        this.logger = Optional.of(logger);
         return this;
     }
 

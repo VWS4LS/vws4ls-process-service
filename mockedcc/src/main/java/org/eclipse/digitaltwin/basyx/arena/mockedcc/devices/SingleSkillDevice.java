@@ -2,7 +2,7 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.eclipse.digitaltwin.basyx.arena.mockedcc.controllers.OperationChain.OperationFunctionProvider;
+import org.eclipse.digitaltwin.basyx.arena.common.OperationFunctionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
