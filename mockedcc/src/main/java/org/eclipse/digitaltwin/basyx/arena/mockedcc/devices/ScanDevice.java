@@ -3,19 +3,14 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ScanDevice extends SingleSkillDevice {
 
-    final static Logger logger = LoggerFactory.getLogger(ScanDevice.class);
-
     private double scanPosition;
     private boolean scanFinished = false;
-    private DeviceStatus status = DeviceStatus.IDLE;
 
     final double scanTotal = 100;
     final double scanStep = 1;
@@ -37,27 +32,20 @@ public class ScanDevice extends SingleSkillDevice {
     }
 
     public void scan(double scanPosition) {
-        this.scanPosition = scanPosition;
+        doWork(() -> {
+            this.scanPosition = scanPosition;
+            
+            double scanProgress = 0;
 
-        status = DeviceStatus.WORKING;
-
-        logger.info("Starting scan operation");
-
-        double scanProgress = 0;
-
-        while (scanTotal >= scanProgress) {
-            scanProgress += scanStep;
-            logger.info("[" + scanProgress / scanTotal * 100 + "%] Scanning...");
-            try {
-                Thread.sleep(delayPerStep);
-            } catch (InterruptedException e) {
-                logger.error("Error executing scan operation", e);
+            while (scanTotal >= scanProgress) {
+                scanProgress += scanStep;
+                log("[" + scanProgress / scanTotal * 100 + "%] Scanning...");
+                doSleep(delayPerStep);
             }
-        }
 
-        status = DeviceStatus.IDLE;
-        logger.info("Done scanning");
-        scanFinished = true;
+            scanFinished = true;
+        }, "Scan");
+
     }
 
     @Override
@@ -71,10 +59,6 @@ public class ScanDevice extends SingleSkillDevice {
 
     public boolean isScanFinished() {
         return scanFinished;
-    }
-
-    public DeviceStatus getStatus() {
-        return status;
     }
 
 }

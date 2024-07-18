@@ -3,19 +3,14 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ETestDevice extends SingleSkillDevice {
 
-    final static Logger logger = LoggerFactory.getLogger(ScanDevice.class);
-
     private double etestPosition;
     private boolean etestPassed = false;
-    private DeviceStatus status = DeviceStatus.IDLE;
 
     final double etestTotal = 100;
     final double etestStep = 1;
@@ -37,27 +32,19 @@ public class ETestDevice extends SingleSkillDevice {
     }
 
     public void etest(double etestPosition) {
-        this.etestPosition = etestPosition;
+        doWork(() ->{
+            this.etestPosition = etestPosition;
 
-        status = DeviceStatus.WORKING;
-
-        logger.info("Starting E-Test operation");
-
-        double etestProgress = 0;
-
-        while (etestTotal >= etestProgress) {
-            etestProgress += etestStep;
-            logger.info("[" + etestProgress / etestTotal * 100 + "%] Testing...");
-            try {
-                Thread.sleep(delayPerStep);
-            } catch (InterruptedException e) {
-                logger.error("Error executing E-Test operation", e);
+            double etestProgress = 0;
+    
+            while (etestTotal >= etestProgress) {
+                etestProgress += etestStep;
+                log("[" + etestProgress / etestTotal * 100 + "%] Testing...");
+                doSleep(delayPerStep);
             }
-        }
-
-        status = DeviceStatus.IDLE;
-        logger.info("Done testing");
-        etestPassed = true;
+            
+            etestPassed = true;
+        }, "Electrical Test");
     }
 
     @Override
@@ -71,10 +58,6 @@ public class ETestDevice extends SingleSkillDevice {
 
     public boolean isEtestPassed() {
         return etestPassed;
-    }
-
-    public DeviceStatus getStatus() {
-        return status;
     }
 
 }
