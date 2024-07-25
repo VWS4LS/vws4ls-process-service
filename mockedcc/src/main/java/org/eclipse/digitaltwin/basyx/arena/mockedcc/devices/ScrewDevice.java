@@ -3,16 +3,22 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ScrewDevice extends SingleSkillDevice {
+
     private double desiredTorque = 0;
     private boolean torqueReached = false;
 
     final double torqueStep = 0.5;
     final long delayPerStep = 200; // ms
+
+    public ScrewDevice(ApplicationEventPublisher applicationEventPublisher) {
+        super(applicationEventPublisher);
+    }
 
     @Async
     @Override

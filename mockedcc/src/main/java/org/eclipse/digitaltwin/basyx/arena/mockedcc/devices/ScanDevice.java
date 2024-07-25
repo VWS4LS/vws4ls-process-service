@@ -3,6 +3,7 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,10 @@ public class ScanDevice extends SingleSkillDevice {
     final double scanTotal = 100;
     final double scanStep = 1;
     final long delayPerStep = 200; // ms
+
+    public ScanDevice(ApplicationEventPublisher applicationEventPublisher) {
+        super(applicationEventPublisher);
+    }
 
     @Async
     @Override

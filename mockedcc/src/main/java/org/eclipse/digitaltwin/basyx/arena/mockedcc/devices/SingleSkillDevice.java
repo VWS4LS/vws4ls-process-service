@@ -1,32 +1,47 @@
 package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.eclipse.digitaltwin.basyx.arena.common.OperationFunctionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public abstract class SingleSkillDevice implements OperationFunctionProvider {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private DeviceStatus status = DeviceStatus.IDLE;
 
-    private String message;
+    private Deque<String> messages = new ArrayDeque<>();
+
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    public SingleSkillDevice(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     abstract public String getDeviceName();
 
-    public String getMessage() {
-        return message;
+    public String getCurrentMessage() {
+        return messages.peekLast();
     }
 
-    protected void log(String message) {
-        this.message = message;
+    @JsonIgnore
+    public Deque<String> getMessages() {
+        return new ArrayDeque<>(messages);
+    }
+
+    protected synchronized void log(String message) {
+        this.messages.add(message);
         logger.info(message);
     }
 
-    protected void error(String message) {
+    protected synchronized void error(String message) {
         setStatus(DeviceStatus.ERROR);
-        this.message = message;
+        this.messages.add(message);
         logger.error(message);
     }
 
@@ -35,6 +50,7 @@ public abstract class SingleSkillDevice implements OperationFunctionProvider {
     }
 
     protected void setStatus(DeviceStatus status) {
+        applicationEventPublisher.publishEvent(new StatusChangedEvent(this, this.status, status));
         this.status = status;
         logger.info("Status changed to " + status);
     }
@@ -42,16 +58,14 @@ public abstract class SingleSkillDevice implements OperationFunctionProvider {
     protected void doWork(Runnable runnable, String operationName) {
         setStatus(DeviceStatus.WORKING);
         log("Starting " + operationName);
-        CompletableFuture.runAsync(runnable)
-                .thenRun(() -> {
-                    setStatus(DeviceStatus.IDLE);
-                    log("Finished " + operationName);
-                })
-                .exceptionally(t -> {
-                    error(t.getMessage());
-                    return null;
-                })
-                .join();
+        try {
+            runnable.run();
+            setStatus(DeviceStatus.IDLE);
+            log("Finished " + operationName);
+        } catch (Exception e) {
+            error(e.getMessage());
+            throw e;
+        }
     }
 
     protected void doSleep(long duration) {

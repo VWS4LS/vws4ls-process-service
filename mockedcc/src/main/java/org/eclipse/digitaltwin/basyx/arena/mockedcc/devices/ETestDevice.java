@@ -3,11 +3,13 @@ package org.eclipse.digitaltwin.basyx.arena.mockedcc.devices;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ETestDevice extends SingleSkillDevice {
+
 
     private double etestPosition;
     private boolean etestPassed = false;
@@ -15,6 +17,10 @@ public class ETestDevice extends SingleSkillDevice {
     final double etestTotal = 100;
     final double etestStep = 1;
     final long delayPerStep = 200; // ms
+
+    public ETestDevice(ApplicationEventPublisher applicationEventPublisher) {
+        super(applicationEventPublisher);
+    }
 
     @Async
     @Override
