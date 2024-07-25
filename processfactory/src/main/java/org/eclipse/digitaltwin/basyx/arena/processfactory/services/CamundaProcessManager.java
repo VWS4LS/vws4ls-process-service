@@ -70,7 +70,6 @@ public class CamundaProcessManager {
 
         return allOf(processes.stream()
                 .map(this::cancelProcess)
-                .map(e -> e.toCompletableFuture())
                 .onClose(() -> processes.clear())
                 .collect(Collectors.toList()));
     }
@@ -122,8 +121,13 @@ public class CamundaProcessManager {
         }
     }
 
-    private ZeebeFuture<CancelProcessInstanceResponse> cancelProcess(long processInstanceKey) {
-        return zeebeClient.newCancelInstanceCommand(processInstanceKey).send();
+    private CompletableFuture<CancelProcessInstanceResponse> cancelProcess(long processInstanceKey) {
+        return zeebeClient.newCancelInstanceCommand(processInstanceKey)
+                .send()
+                .exceptionally((t) -> {
+                    logger.warn(t.getMessage());
+                    return null;
+                }).toCompletableFuture();
     }
 
     private static <T> CompletableFuture<List<T>> allOf(List<CompletableFuture<T>> futuresList) {
