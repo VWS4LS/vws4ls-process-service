@@ -7,6 +7,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.basyx.arena.common.OperationChain;
 import org.eclipse.digitaltwin.basyx.arena.workermanager.skills.Skill;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.slf4j.LoggerFactory;
 
 public class OperationSkillBuilder {
 
@@ -19,6 +20,7 @@ public class OperationSkillBuilder {
             Operation operation) {
         return inputMap -> OperationChain.from(inputMap)
                 .mapOperation(vars -> submodelService.invokeOperation(operation.getIdShort(), vars))
+                .log(LoggerFactory.getLogger(operation.getIdShort()))
                 .endMap();
     }
 
